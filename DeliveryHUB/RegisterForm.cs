@@ -9,12 +9,12 @@ namespace DeliveryHUB
 {
     public partial class RegisterForm : MaterialForm
     {
-        private BD db = new BD(); // Подключение к базе данных
+        private BD db = new BD();
 
         public RegisterForm()
         {
             InitializeComponent();
-            lbMessError.Visible = false; // Скрыть сообщение об ошибке при загрузке формы
+            lbMessError.Visible = false; 
             var materialSkinManager = MaterialSkinManager.Instance;
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
@@ -22,7 +22,6 @@ namespace DeliveryHUB
 
         }
 
-        // Функция проверки, что строка состоит только из латинских символов
         private bool IsLatin(string input)
         {
             return Regex.IsMatch(input, @"^[a-zA-Z0-9@._]+$");
@@ -37,10 +36,8 @@ namespace DeliveryHUB
             string login = txtLogin.Text.Trim();
             string password = txtPassword.Text.Trim();
 
-            // Скрыть сообщение перед проверкой
             lbMessError.Visible = false;
 
-            // Проверка, что все поля заполнены
             if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName) || string.IsNullOrEmpty(phone) ||
                 string.IsNullOrEmpty(email) || string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
             {
@@ -48,35 +45,30 @@ namespace DeliveryHUB
                 return;
             }
 
-            // Проверка логина
             if (!IsValidLogin(login))
             {
                 ShowErrorMessage("Логин должен быть на латинице, содержать хотя бы\n одну цифру и быть длиной не менее 5 символов.");
                 return;
             }
 
-            // Проверка email
             if (!IsLatin(email))
             {
                 ShowErrorMessage("Email должен содержать только латинские буквы,\n цифры и допустимые символы (@, ., _).");
                 return;
             }
 
-            // Проверка пароля
             if (!IsValidPassword(password))
             {
                 ShowErrorMessage("Пароль должен содержать только латинские\n символы, быть длиной не менее 8 символов.");
                 return;
             }
 
-            // Проверка телефона
             if (!IsValidPhone(phone))
             {
                 ShowErrorMessage("Введите корректный номер телефона\n (например, +79874562378).");
                 return;
             }
 
-            // Проверка существующего логина
             try
             {
                 db.openConnection();
@@ -94,7 +86,6 @@ namespace DeliveryHUB
                     }
                 }
 
-                // Регистрация нового пользователя
                 string query = @"
                 INSERT INTO Customers (FirstName, LastName, Phone, Email, Login, Password)
                 VALUES (@firstName, @lastName, @phone, @email, @login, @password)";
@@ -111,9 +102,8 @@ namespace DeliveryHUB
 
                     lbMessError.Text = "Регистрация прошла успешно!";
                     lbMessError.ForeColor = System.Drawing.Color.Green;
-                    lbMessError.Visible = true; // Показать сообщение об успехе
+                    lbMessError.Visible = true; 
 
-                    // Очистка полей
                     txtFirstName.Clear();
                     txtLastName.Clear();
                     txtPhone.Clear();
@@ -138,7 +128,6 @@ namespace DeliveryHUB
             loginForm.Show();
         }
 
-        // Функция для показа сообщения об ошибке
         private void ShowErrorMessage(string message)
         {
             lbMessError.Text = message;
@@ -146,20 +135,16 @@ namespace DeliveryHUB
             lbMessError.Visible = true;
         }
 
-        // Функция проверки телефона
         private bool IsValidPhone(string phone)
         {
-            // Разрешаем формат телефона с + в начале и длиной от 10 до 15 цифр
             return Regex.IsMatch(phone, @"^\+?\d{10,15}$");
         }
 
-        // Функция проверки логина
         private bool IsValidLogin(string login)
         {
             return login.Length >= 5 && Regex.IsMatch(login, @"^[a-zA-Z0-9]+$") && Regex.IsMatch(login, @"\d");
         }
 
-        // Функция проверки пароля: только латиница, минимум 8 символов
         private bool IsValidPassword(string password)
         {
             return password.Length >= 8 && Regex.IsMatch(password, @"^[a-zA-Z0-9]+$");

@@ -10,10 +10,10 @@ namespace DeliveryHUB
 {
     public partial class UserForm : MaterialForm
     {
-        private BD db = new BD(); // Экземпляр подключения к базе данных
-        private DataTable ordersTable; // Таблица для хранения данных
-        private string currentSortColumn = ""; // Текущая колонка для сортировки
-        private string currentSortOrder = "ASC"; // Текущий порядок сортировки
+        private BD db = new BD(); 
+        private DataTable ordersTable; 
+        private string currentSortColumn = ""; 
+        private string currentSortOrder = "ASC"; 
         private bool isExitButtonClicked = false;
         public static class ThemeManager
         {
@@ -100,9 +100,8 @@ namespace DeliveryHUB
                     materialComboBox.ForeColor = Color.Black;
                 }
 
-                // Принудительное обновление стиля
-                materialComboBox.Invalidate(); // Помечаем элемент для перерисовки
-                materialComboBox.Refresh();    // Принудительно обновляем отображение
+                materialComboBox.Invalidate(); 
+                materialComboBox.Refresh(); 
             }
 
 
@@ -128,13 +127,11 @@ namespace DeliveryHUB
                 dataGridView.DefaultCellStyle.ForeColor = currentTheme == Theme.Dark ? Color.White : Color.Black;
                 dataGridView.DefaultCellStyle.SelectionBackColor = currentTheme == Theme.Dark ? Color.FromArgb(100, 100, 100) : Color.LightBlue;
                 dataGridView.DefaultCellStyle.SelectionForeColor = currentTheme == Theme.Dark ? Color.White : Color.Black;
-                // Устанавливаем размер шрифта заголовков всех колонок
                 foreach (DataGridViewColumn column in dataGridView.Columns)
                 {
-                    column.HeaderCell.Style.Font = new System.Drawing.Font("Mongolian Baiti", 14, System.Drawing.FontStyle.Italic); // Устанавливаем размер шрифта для заголовка
-                   // column.AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells; // Автоматическая ширина в зависимости от содержимого
+                    column.HeaderCell.Style.Font = new System.Drawing.Font("Mongolian Baiti", 14, System.Drawing.FontStyle.Italic); 
+
                 }
-                // Настройка заголовков столбцов
                 var headerStyle = new DataGridViewCellStyle
                 {
                     BackColor = currentTheme == Theme.Dark ? Color.FromArgb(30, 30, 30) : Color.DarkCyan,
@@ -144,7 +141,6 @@ namespace DeliveryHUB
                 };
                 dataGridView.ColumnHeadersDefaultCellStyle = headerStyle;
 
-                // Настройка заголовков строк
                 var rowHeaderStyle = new DataGridViewCellStyle
                 {
                     BackColor = currentTheme == Theme.Dark ? Color.FromArgb(30, 30, 30) : Color.DarkCyan,
@@ -154,7 +150,7 @@ namespace DeliveryHUB
                 };
                 dataGridView.RowHeadersDefaultCellStyle = rowHeaderStyle;
 
-                dataGridView.EnableHeadersVisualStyles = false; // Отключаем стили по умолчанию
+                dataGridView.EnableHeadersVisualStyles = false; 
             }
 
             private static void ApplyThemeToMenuStrip(MenuStrip menuStrip)
@@ -194,16 +190,16 @@ namespace DeliveryHUB
             materialSkinManager.ColorScheme = new ColorScheme(
                 Primary.Cyan800, Primary.Cyan900, Primary.Cyan500, Accent.LightGreen200, TextShade.WHITE);
 
-            ThemeManager.ApplyTheme(this); // Применяем тему при инициализации
+            ThemeManager.ApplyTheme(this); 
         }
 
 
         private void OrdersForm_Load(object sender, EventArgs e)
         {
-            LoadOrders(); // Загружаем данные при загрузке формы
-            LoadPickupPoints(); // Загружаем пункты выдачи
-            LoadStatusOrders(); // Загружаем статусы заказов
-            PopulateSortColumns(); // Загружаем названия колонок для сортировки
+            LoadOrders(); 
+            LoadPickupPoints(); 
+            LoadStatusOrders(); 
+            PopulateSortColumns(); 
         }
         private void LoadPickupPoints()
         {
@@ -216,14 +212,14 @@ namespace DeliveryHUB
                 SqlDataReader reader = command.ExecuteReader();
 
                 cmbPickupPoints.Items.Clear();
-                cmbPickupPoints.Items.Add("Выберите пункт"); // Пункт по умолчанию
+                cmbPickupPoints.Items.Add("Выберите пункт"); 
 
                 while (reader.Read())
                 {
                     cmbPickupPoints.Items.Add(reader["Address"].ToString());
                 }
 
-                cmbPickupPoints.SelectedIndex = 0; // Устанавливаем пункт по умолчанию
+                cmbPickupPoints.SelectedIndex = 0; 
                 reader.Close();
             }
             catch (Exception ex)
@@ -247,14 +243,14 @@ namespace DeliveryHUB
                 SqlDataReader reader = command.ExecuteReader();
 
                 cmbStatusOrders.Items.Clear();
-                cmbStatusOrders.Items.Add("Выберите статус"); // Пункт по умолчанию
+                cmbStatusOrders.Items.Add("Выберите статус");
 
                 while (reader.Read())
                 {
                     cmbStatusOrders.Items.Add(reader["StatusDescription"].ToString());
                 }
 
-                cmbStatusOrders.SelectedIndex = 0; // Устанавливаем пункт по умолчанию
+                cmbStatusOrders.SelectedIndex = 0; 
                 reader.Close();
             }
             catch (Exception ex)
@@ -267,12 +263,12 @@ namespace DeliveryHUB
             }
         }
 
-        private int currentCustomerId; // ID авторизованного клиента
+        private int currentCustomerId; 
 
         public UserForm(int customerId)
         {
             InitializeComponent();
-            currentCustomerId = customerId; // Сохраняем ID клиента
+            currentCustomerId = customerId; 
         }
 
         private void LoadOrders()
@@ -308,10 +304,10 @@ WHERE o.CustomerID = @CustomerID";
 
                 dataGridViewOrders.DataSource = ordersTable;
 
-                // Применяем стили к DataGridView
+
                 ThemeManager.ApplyThemeToDataGridView(dataGridViewOrders);
 
-                // Остальная настройка DataGridView
+
                 dataGridViewOrders.AutoGenerateColumns = true;
                 dataGridViewOrders.ReadOnly = true;
                 dataGridViewOrders.AllowUserToAddRows = false;
@@ -338,28 +334,27 @@ WHERE o.CustomerID = @CustomerID";
         private void PopulateSortColumns()
         {
             cmbSortTable.Items.Clear();
-            cmbSortTable.Items.Add("Выберите колонку для сортировки"); // Пункт по умолчанию
+            cmbSortTable.Items.Add("Выберите колонку для сортировки"); 
 
-            // Добавляем названия колонок из DataTable
             foreach (DataColumn column in ordersTable.Columns)
             {
                 cmbSortTable.Items.Add(column.ColumnName);
             }
 
-            cmbSortTable.SelectedIndex = 0; // Устанавливаем пункт по умолчанию
+            cmbSortTable.SelectedIndex = 0; 
         }
 
         private void cmbSortTable_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbSortTable.SelectedIndex == 0) // Если выбран пункт по умолчанию
+            if (cmbSortTable.SelectedIndex == 0) 
             {
-                currentSortColumn = ""; // Сбрасываем сортировку
+                currentSortColumn = ""; 
                 ApplyFiltersAndSorting();
                 return;
             }
 
-            currentSortColumn = cmbSortTable.SelectedItem.ToString(); // Получаем выбранную колонку
-            currentSortOrder = "ASC"; // Устанавливаем сортировку по возрастанию
+            currentSortColumn = cmbSortTable.SelectedItem.ToString(); 
+            currentSortOrder = "ASC"; 
             ApplyFiltersAndSorting();
         }
 
@@ -373,32 +368,27 @@ WHERE o.CustomerID = @CustomerID";
 
                 string filterExpression = "";
 
-                // Фильтр по пункту выдачи
                 if (!string.IsNullOrEmpty(selectedAddress) && selectedAddress != "Выберите пункт")
                 {
-                    filterExpression += $"[ПунктВыдачи] = '{selectedAddress}'"; // Используйте отображаемое имя столбца
+                    filterExpression += $"[ПунктВыдачи] = '{selectedAddress}'"; 
                 }
 
-                // Фильтр по статусу заказа
                 if (!string.IsNullOrEmpty(selectedStatus) && selectedStatus != "Выберите статус")
                 {
                     if (!string.IsNullOrEmpty(filterExpression))
                     {
                         filterExpression += " AND ";
                     }
-                    filterExpression += $"[Статус] = '{selectedStatus}'"; // Используйте отображаемое имя столбца
+                    filterExpression += $"[Статус] = '{selectedStatus}'"; 
                 }
 
-                // Применяем фильтр
                 ordersTable.DefaultView.RowFilter = filterExpression;
 
-                // Применяем сортировку
                 if (!string.IsNullOrEmpty(currentSortColumn))
                 {
                     ordersTable.DefaultView.Sort = $"{currentSortColumn} {currentSortOrder}";
                 }
 
-                // Обновляем DataGridView напрямую из DefaultView
                 dataGridViewOrders.DataSource = ordersTable.DefaultView;
             }
             catch (Exception ex)
@@ -410,20 +400,19 @@ WHERE o.CustomerID = @CustomerID";
 
         private void cmbPickupPoints_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ApplyFiltersAndSorting(); // Применяем фильтры и сортировку при изменении пункта
+            ApplyFiltersAndSorting(); 
         }
 
  
         private void cmbStatusOrders_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ApplyFiltersAndSorting(); // Применяем фильтры и сортировку при изменении статуса
+            ApplyFiltersAndSorting(); 
         }
 
         private void OrdersForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!isExitButtonClicked) // Если форма закрывается не через кнопку "Выход"
+            if (!isExitButtonClicked) 
             {
-                // Завершаем процесс приложения
                 Application.Exit();
             }
         }
@@ -463,14 +452,12 @@ WHERE o.CustomerID = @CustomerID";
 
         private void обновитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Сбрасываем фильтры и сортировку
             cmbPickupPoints.SelectedIndex = 0;
             cmbStatusOrders.SelectedIndex = 0;
             cmbSortTable.SelectedIndex = 0;
             currentSortColumn = "";
             currentSortOrder = "ASC";
 
-            // Перезагружаем данные
             LoadOrders();
             MessageBox.Show("Данные успешно обновлены.", "Обновить");
         }
@@ -478,54 +465,46 @@ WHERE o.CustomerID = @CustomerID";
 
         private void выходToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Устанавливаем флаг, что выход был инициирован кнопкой "Выход"
             isExitButtonClicked = true;
 
-            // Открываем форму авторизации
             LoginForm loginForm = new LoginForm();
             loginForm.Show();
 
-            // Закрываем текущую форму
             this.Close();
         }
 
         private void SearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Открываем окно для ввода строки поиска
             string searchQuery = Prompt.ShowDialog("Введите текст для поиска:", "Поиск");
 
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 string filterExpression = "";
 
-                // Проверяем, является ли введенное значение числом или датой
                 bool isNumeric = decimal.TryParse(searchQuery, out decimal numericValue);
                 bool isDate = DateTime.TryParse(searchQuery, out DateTime dateValue);
 
-                // Формируем выражение для фильтрации
                 foreach (DataColumn column in ordersTable.Columns)
                 {
-                    if (column.DataType == typeof(string)) // Поиск по текстовым столбцам
+                    if (column.DataType == typeof(string)) 
                     {
                         if (!string.IsNullOrEmpty(filterExpression))
                             filterExpression += " OR ";
 
                         filterExpression += $"{column.ColumnName} LIKE '%{searchQuery}%'";
                     }
-                    else if (column.DataType == typeof(decimal) && isNumeric) // Поиск по столбцам с ценой
+                    else if (column.DataType == typeof(decimal) && isNumeric) 
                     {
                         if (!string.IsNullOrEmpty(filterExpression))
                             filterExpression += " OR ";
 
-                        // Конвертируем число в строку и используем фильтр
                         filterExpression += $"CONVERT([{column.ColumnName}], 'System.String') LIKE '%{searchQuery}%'";
                     }
-                    else if (column.DataType == typeof(DateTime)) // Поиск по столбцам с датами
+                    else if (column.DataType == typeof(DateTime)) 
                     {
                         if (!string.IsNullOrEmpty(filterExpression))
                             filterExpression += " OR ";
 
-                        // Конвертируем дату в строку и ищем частичное совпадение
                         filterExpression += $"CONVERT([{column.ColumnName}], 'System.String') LIKE '%{searchQuery}%'";
                     }
                 }
@@ -534,17 +513,14 @@ WHERE o.CustomerID = @CustomerID";
                 {
                     try
                     {
-                        // Применяем фильтр
                         ordersTable.DefaultView.RowFilter = filterExpression;
 
-                        // Проверяем, есть ли результаты
                         if (ordersTable.DefaultView.Count == 0)
                         {
                             MessageBox.Show("Записи, соответствующие поисковому запросу, не найдены.", "Поиск");
                         }
                         else
                         {
-                            // Обновляем DataGridView
                             dataGridViewOrders.DataSource = ordersTable.DefaultView.ToTable();
                         }
                     }
@@ -570,7 +546,6 @@ WHERE o.CustomerID = @CustomerID";
         {
             var materialSkinManager = MaterialSkinManager.Instance;
 
-            // Переключаем тему на основе состояния переключателя
             if (ThemeSwitcher.Checked)
             {
                 materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
@@ -580,13 +555,12 @@ WHERE o.CustomerID = @CustomerID";
                 materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
             }
 
-            ThemeManager.ToggleTheme(this); // Применяем тему ко всем элементам
+            ThemeManager.ToggleTheme(this); 
 
-            // Принудительно обновляем все элементы
             foreach (Control control in this.Controls)
             {
-                control.Invalidate(); // Помечаем элементы для перерисовки
-                control.Refresh();    // Принудительно обновляем отображение
+                control.Invalidate(); 
+                control.Refresh();    
             }
         }
 

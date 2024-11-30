@@ -42,9 +42,7 @@
             this.txtPhone = new MaterialSkin.Controls.MaterialTextBox();
             this.txtEmail = new MaterialSkin.Controls.MaterialTextBox();
             this.txtLogin = new MaterialSkin.Controls.MaterialTextBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnRegister = new MaterialSkin.Controls.MaterialButton();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // txtPassword
@@ -256,9 +254,6 @@
             this.txtLogin.UseAccent = false;
             this.txtLogin.UseTallSize = false;
             // 
-            // pictureBox1
-            // 
-                     // 
             // btnRegister
             // 
             this.btnRegister.AutoSize = false;
@@ -286,7 +281,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(492, 697);
             this.Controls.Add(this.btnRegister);
-            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.txtPassword);
             this.Controls.Add(this.txtLogin);
             this.Controls.Add(this.txtEmail);
@@ -306,7 +300,6 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Регистрация";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RegisterForm_FormClosing);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -327,7 +320,6 @@
         private MaterialSkin.Controls.MaterialTextBox txtPhone;
         private MaterialSkin.Controls.MaterialTextBox txtEmail;
         private MaterialSkin.Controls.MaterialTextBox txtLogin;
-        private System.Windows.Forms.PictureBox pictureBox1;
         private MaterialSkin.Controls.MaterialButton btnRegister;
     }
 }
