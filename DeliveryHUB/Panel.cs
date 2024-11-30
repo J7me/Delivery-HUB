@@ -1353,7 +1353,7 @@ namespace DeliveryHUB
             Button cancel = new Button() { Text = "Отмена", Left = 300, Width = 80, Top = 70, DialogResult = DialogResult.Cancel };
 
             confirmation.Click += (sender, e) => { prompt.Close(); };
-            cancel.Click += (sender, e) => { prompt.Close(); };
+            cancel.Click += (sender, e) => { prompt.Close(); }; 
 
             prompt.Controls.Add(textLabel);
             prompt.Controls.Add(textBox);
