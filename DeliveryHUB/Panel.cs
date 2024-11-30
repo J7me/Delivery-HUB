@@ -14,7 +14,7 @@ namespace DeliveryHUB
 {
     public partial class MainForm : MaterialForm
     {
-        private BD db = new BD(); // Экземпляр подключения к базе данных
+        private BD db = new BD(); 
         public static class ThemeManager
         {
             public enum Theme
@@ -24,10 +24,9 @@ namespace DeliveryHUB
             private static Theme currentTheme = Theme.Light;
             public static void ApplyTheme(Form form)
             {
-                // Применяем тему к контролам
+
                 ApplyThemeToControls(form.Controls);
 
-                // Обновляем тему MaterialSkin
                 var materialSkinManager = MaterialSkinManager.Instance;
                 if (currentTheme == Theme.Dark)
                 {
@@ -46,7 +45,6 @@ namespace DeliveryHUB
             {
                 currentTheme = currentTheme == Theme.Light ? Theme.Dark : Theme.Light;
 
-                // Применяем тему
                 ApplyTheme(form);
 
             }
@@ -59,14 +57,10 @@ namespace DeliveryHUB
                         case Button button:
                             ApplyThemeToButton(button);
                             break;
-                        //case Label label:
-                        //    ApplyThemeToLabel(label); break;
                         case TextBox textBox:
                             ApplyThemeToTextBox(textBox); break;
                         case DataGridView dataGridView:
                             ApplyThemeToDataGridView(dataGridView); break;
-                        //case ComboBox comboBox:
-                        //    ApplyThemeToComboBox(comboBox); break;
                         case Panel panel:
                             panel.BackColor = currentTheme == Theme.Dark ? Color.FromArgb(55, 55, 55) : Color.FromArgb(245, 245, 245); break;
                         case GroupBox groupBox:
@@ -98,16 +92,11 @@ namespace DeliveryHUB
                 dataGridView.ColumnHeadersDefaultCellStyle.ForeColor = currentTheme == Theme.Dark ? Color.FromArgb(242, 242, 242) : Color.FromArgb(242, 242, 242);
                 dataGridView.GridColor = currentTheme == Theme.Dark ? Color.Gray : Color.LightGray;
             }
-            private static void ApplyThemeToComboBox(ComboBox comboBox)
-            {
-                //comboBox.BackColor = currentTheme == Theme.Dark ? Color.FromArgb(50, 50, 50) : Color.White;
-                //comboBox.ForeColor = currentTheme == Theme.Dark ? Color.White : Color.Black;
-            }
         }
         public MainForm()
         {
             InitializeComponent();
-            dataGridViewMain.DataError += dataGridViewMain_DataError; // Подключаем обработчик
+            dataGridViewMain.DataError += dataGridViewMain_DataError;
             ThemeManager.ApplyTheme(this);
 
             var materialSkinManager = MaterialSkinManager.Instance;
@@ -119,34 +108,28 @@ namespace DeliveryHUB
         }
         private void dataGridViewMain_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            // Определяем тип ошибки
+
             if (e.Exception != null && e.Exception is NoNullAllowedException)
             {
-                // Получаем имя колонки, вызвавшей ошибку
                 string columnName = dataGridViewMain.Columns[e.ColumnIndex].HeaderText;
                 MessageBox.Show($"Ошибка: поле '{columnName}' не может быть пустым. Пожалуйста, заполните его.", "Ошибка");
             }
             else if (e.Exception != null && e.Exception is FormatException)
             {
-                // Получаем имя колонки, вызвавшей ошибку
                 string columnName = dataGridViewMain.Columns[e.ColumnIndex].HeaderText;
                 MessageBox.Show($"Ошибка: введены некорректные данные для столбца '{columnName}'. Проверьте формат данных.", "Ошибка");
             }
             else
             {
-                // Общая обработка ошибок
                 MessageBox.Show($"Произошла ошибка: {e.Exception?.Message}", "Ошибка");
             }
 
-            // Устанавливаем флаг, чтобы предотвратить выброс стандартной ошибки DataGridView
             e.ThrowException = false;
         }
         private void UpdateFilterVisibility()
         {
-            // Проверяем, выбрана ли таблица Orders
             bool isOrdersTable = SwitchingTablesBox.SelectedItem?.ToString() == "Orders";
 
-            // Управляем видимостью элементов фильтрации
             cmbPickupPoints.Visible = isOrdersTable;
             cmbStatusOrders.Visible = isOrdersTable;
             FilterLabel.Visible = isOrdersTable;
@@ -154,21 +137,19 @@ namespace DeliveryHUB
         }
         private void MainForm_Load(object sender, EventArgs e)
         {
-            // TODO: данная строка кода позволяет загрузить данные в таблицу "deliveryHUBDataSet.Orders". При необходимости она может быть перемещена или удалена.
-            //  this.ordersTableAdapter.Fill(this.deliveryHUBDataSet.Orders);
-            PopulateTableList(); // Заполняем список таблиц в ComboBox
-            LoadPickupPoints();  // Загружаем адреса из PickupPoints в ComboBox
-            LoadStatusOrders();  // Загружаем статусы заказов в ComboBox
-            UpdateFilterVisibility();   // Устанавливаем видимость фильтров в зависимости от выбранной таблицы
+            PopulateTableList(); 
+            LoadPickupPoints();  
+            LoadStatusOrders();  
+            UpdateFilterVisibility();   
         }
-        private string currentSortColumn = null; // Имя текущего столбца сортировки
+        private string currentSortColumn = null;
         private void ApplySorting()
         {
             if (!string.IsNullOrEmpty(currentSortColumn) && dataGridViewMain.DataSource is DataTable currentTable)
             {
-                currentTable.DefaultView.Sort = $"{currentSortColumn} ASC"; // Сортировка по возрастанию
-                currentTable = currentTable.DefaultView.ToTable(); // Применяем сортировку
-                dataGridViewMain.DataSource = currentTable; // Обновляем отображение
+                currentTable.DefaultView.Sort = $"{currentSortColumn} ASC"; 
+                currentTable = currentTable.DefaultView.ToTable(); 
+                dataGridViewMain.DataSource = currentTable; 
             }
         }
         private void PopulateTableList()
@@ -182,7 +163,6 @@ namespace DeliveryHUB
                 foreach (DataRow row in schema.Rows)
                 {
                     string tableName = row["TABLE_NAME"].ToString();
-                    // Исключаем таблицу sysdiagrams
                     if (!string.Equals(tableName, "sysdiagrams", StringComparison.OrdinalIgnoreCase))
                     {
                         SwitchingTablesBox.Items.Add(tableName);
@@ -190,7 +170,7 @@ namespace DeliveryHUB
                 }
 
                 if (SwitchingTablesBox.Items.Count > 0)
-                    SwitchingTablesBox.SelectedIndex = 5; // Выбираем пятую таблицу по умолчанию
+                    SwitchingTablesBox.SelectedIndex = 5; 
             }
             catch (Exception ex)
             {
@@ -207,10 +187,8 @@ namespace DeliveryHUB
             {
                 db.openConnection();
 
-                // Переменная для запроса
                 string query;
 
-                // Проверяем, если таблица Orders, то выполняем запрос с JOIN для замены ID
                 if (tableName == "Orders")
                 {
                     query = @"
@@ -258,7 +236,7 @@ namespace DeliveryHUB
         LEFT JOIN 
             PickupPoints pp ON d.PickupPointID = pp.PickupPointID
         LEFT JOIN 
-            StatusesDelivery sd ON d.Status = sd.DeliveryStatusID";  // Подключаем таблицу StatusesDelivery для подмены статуса
+            StatusesDelivery sd ON d.Status = sd.DeliveryStatusID";  
 }
 
                 else if (tableName == "OrderIssues")
@@ -307,34 +285,28 @@ namespace DeliveryHUB
 
                 else
                 {
-                    // Стандартный запрос для других таблиц
                     query = $"SELECT * FROM {tableName}";
                 }
 
-                // Выполняем запрос
                 SqlDataAdapter adapter = new SqlDataAdapter(query, db.GetSqlConnection());
                 DataTable table = new DataTable();
                 adapter.Fill(table);
 
-                // Получаем информацию о первичном ключе
                 DataTable primaryKeyInfo = db.GetSqlConnection().GetSchema("IndexColumns", new[] { null, null, tableName, null });
                 string primaryKeyColumn = primaryKeyInfo.Rows.Count > 0 ? primaryKeyInfo.Rows[0]["COLUMN_NAME"].ToString() : null;
 
-                // Устанавливаем источник данных
                 dataGridViewMain.DataSource = table;
                 dataGridViewMain.AllowUserToAddRows = false;
 
-                // Делаем колонку с первичным ключом только для чтения
                 if (!string.IsNullOrEmpty(primaryKeyColumn) && dataGridViewMain.Columns.Contains(primaryKeyColumn))
                 {
                     dataGridViewMain.Columns[primaryKeyColumn].ReadOnly = true;
                 }
                 PopulateSortColumns();
-                // Устанавливаем размер шрифта заголовков всех колонок
                 foreach (DataGridViewColumn column in dataGridViewMain.Columns)
                 {
-                    column.HeaderCell.Style.Font = new System.Drawing.Font("Mongolian Baiti", 14, System.Drawing.FontStyle.Italic); // Устанавливаем размер шрифта для заголовка
-                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells; // Автоматическая ширина в зависимости от контента
+                    column.HeaderCell.Style.Font = new System.Drawing.Font("Mongolian Baiti", 14, System.Drawing.FontStyle.Italic);
+                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells; 
                 }
             }
             catch (Exception ex)
@@ -351,15 +323,13 @@ namespace DeliveryHUB
             }
 
             string tableName = SwitchingTablesBox.SelectedItem.ToString();
-            int newOrderID = -1; // ID новой записи, если таблица Orders
+            int newOrderID = -1; 
             try
             {
                 db.openConnection();
 
-                // Если таблица "Orders", проверяем и сбрасываем идентификатор автоинкремента
                 if (tableName == "Orders")
                 {
-                    // Получаем максимальное значение ID
                     string maxIdQuery = "SELECT ISNULL(MAX(OrderID), 0) FROM Orders;";
                     int maxId = 0;
 
@@ -368,25 +338,21 @@ namespace DeliveryHUB
                         maxId = Convert.ToInt32(maxIdCommand.ExecuteScalar());
                     }
 
-                    // Сбрасываем идентификатор до текущего максимального значения
                     string resetIdentityQuery = $"DBCC CHECKIDENT ('Orders', RESEED, {maxId});";
                     using (SqlCommand resetCommand = new SqlCommand(resetIdentityQuery, db.GetSqlConnection()))
                     {
-                        resetCommand.ExecuteNonQuery(); // Выполняем сброс идентификатора
+                        resetCommand.ExecuteNonQuery(); 
                     }
                 }
 
-                // Получаем схему таблицы
                 DataTable schema = db.GetSqlConnection().GetSchema("Columns", new[] { null, null, tableName });
 
-                // Определяем первичный ключ
-                string primaryKeyColumn = schema.Rows[0]["COLUMN_NAME"].ToString(); // Предполагаем, что первый столбец — первичный ключ
+                string primaryKeyColumn = schema.Rows[0]["COLUMN_NAME"].ToString(); 
                 var columns = schema.AsEnumerable().Where(row => row["COLUMN_NAME"].ToString() != primaryKeyColumn);
 
-                // Формируем SQL-запрос без указания первичного ключа
                 string query = $"INSERT INTO {tableName} ({string.Join(", ", columns.Select(row => row["COLUMN_NAME"].ToString()))}) " +
                                $"VALUES ({string.Join(", ", columns.Select((_, index) => $"@param{index}"))}); " +
-                               "SELECT SCOPE_IDENTITY();"; // Получаем ID созданной записи, если это таблица Orders
+                               "SELECT SCOPE_IDENTITY();"; 
 
                 using (SqlCommand command = new SqlCommand(query, db.GetSqlConnection()))
                 {
@@ -395,18 +361,18 @@ namespace DeliveryHUB
                     foreach (var column in columns)
                     {
                         string columnName = column["COLUMN_NAME"].ToString();
-                        string dataType = column["DATA_TYPE"].ToString(); // Получаем тип данных столбца
-                        bool isNullable = column["IS_NULLABLE"].ToString() == "YES"; // Проверяем, допускает ли столбец NULL
+                        string dataType = column["DATA_TYPE"].ToString(); 
+                        bool isNullable = column["IS_NULLABLE"].ToString() == "YES"; 
 
                         object value = null;
 
-                        if (dataType.Contains("date")) // Если столбец является датой
+                        if (dataType.Contains("date")) 
                         {
                             DateTime? minDate = null;
 
                             if (columnName.Equals("PickupDate", StringComparison.OrdinalIgnoreCase) && orderDate.HasValue)
                             {
-                                minDate = orderDate; // Устанавливаем минимальную дату
+                                minDate = orderDate; 
                             }
 
                             value = ShowDatePickerWithLabel($"Выберите значение для {columnName}:", columnName, minDate);
@@ -420,34 +386,33 @@ namespace DeliveryHUB
                         {
                             value = Prompt.ShowDialog($"Введите значение для {columnName}:", "Добавить запись");
 
-                            // Если это поле для телефона, проверим его
+
                             if (columnName.Equals("Phone", StringComparison.OrdinalIgnoreCase))
                             {
                                 if (!IsValidPhoneNumber(value?.ToString()))
                                 {
                                     MessageBox.Show("Номер телефона должен содержать только цифры или символ +.", "Ошибка");
-                                    return; // Прерываем операцию
+                                    return; 
                                 }
                             }
                         }
 
-                        // Если значение пустое и поле не допускает NULL, прерываем добавление
+
                         if (value == null || (value is string strValue && string.IsNullOrEmpty(strValue)))
                         {
                             if (!isNullable)
                             {
                                 MessageBox.Show($"Поле '{columnName}' не может быть пустым. Заполните обязательное поле.", "Ошибка");
-                                return; // Прерываем операцию
+                                return; 
                             }
                             command.Parameters.AddWithValue($"@param{columns.ToList().IndexOf(column)}", DBNull.Value);
                             continue;
                         }
 
-                        // Добавляем значение в команду
+
                         command.Parameters.AddWithValue($"@param{columns.ToList().IndexOf(column)}", value);
                     }
 
-                    // Выполняем SQL-команду и, если это таблица Orders, получаем новый ID
                     if (tableName == "Orders")
                     {
                         newOrderID = Convert.ToInt32(command.ExecuteScalar());
@@ -458,7 +423,6 @@ namespace DeliveryHUB
                     }
                 }
 
-                // Если это таблица Orders, предлагаем выбрать продукт
                 if (tableName == "Orders" && newOrderID > 0)
                 {
                     using (Form productSelectionForm = new Form())
@@ -514,13 +478,12 @@ namespace DeliveryHUB
                     }
                 }
 
-                LoadData(tableName); // Обновляем данные таблицы
+                LoadData(tableName); 
                 MessageBox.Show("Запись успешно добавлена.", "Успех");
             }
             catch (SqlException ex)
             {
-                // Детальная обработка ошибок
-                string errorMessage = TranslateSqlError(ex); // Переводим ошибку
+                string errorMessage = TranslateSqlError(ex); 
                 MessageBox.Show($"Ошибка добавления записи: {errorMessage}", "Ошибка");
             }
             catch (Exception ex)
@@ -532,11 +495,10 @@ namespace DeliveryHUB
                 db.closeConnection();
             }
         }
-        // Метод для проверки корректности номера телефона
         private bool IsValidPhoneNumber(string phoneNumber)
         {
-            // Регулярное выражение для проверки номера телефона
-            string pattern = @"^\+?\d+$"; // Разрешает только цифры и один символ +
+
+            string pattern = @"^\+?\d+$"; 
 
             return !string.IsNullOrEmpty(phoneNumber) && System.Text.RegularExpressions.Regex.IsMatch(phoneNumber, pattern);
         }
@@ -549,7 +511,6 @@ namespace DeliveryHUB
         datePickerForm.Height = 200;
         datePickerForm.StartPosition = FormStartPosition.CenterParent;
 
-        // Добавляем метку
         Label label = new Label
         {
             Text = $"Выберите {columnName}:",
@@ -559,16 +520,15 @@ namespace DeliveryHUB
         };
         datePickerForm.Controls.Add(label);
 
-        // Добавляем элемент DateTimePicker
+
         DateTimePicker datePicker = new DateTimePicker
         {
             Left = 10,
             Top = 40,
             Width = 360,
-            Format = DateTimePickerFormat.Short // Устанавливаем короткий формат даты
+            Format = DateTimePickerFormat.Short 
         };
 
-        // Устанавливаем минимальную дату, если задана
         if (minDate.HasValue)
         {
             datePicker.MinDate = minDate.Value;
@@ -576,7 +536,6 @@ namespace DeliveryHUB
 
         datePickerForm.Controls.Add(datePicker);
 
-        // Кнопка подтверждения
         Button btnConfirm = new Button
         {
             Text = "Выбрать",
@@ -588,14 +547,13 @@ namespace DeliveryHUB
         btnConfirm.Click += (s, args) => datePickerForm.Close();
         datePickerForm.Controls.Add(btnConfirm);
 
-        // Отображаем окно и обрабатываем результат
         if (datePickerForm.ShowDialog() == DialogResult.OK)
         {
-            return datePicker.Value; // Возвращаем выбранную дату
+            return datePicker.Value; 
         }
         else
         {
-            return null; // Если выбор отменен
+            return null; 
         }
     }
 }
@@ -610,8 +568,8 @@ namespace DeliveryHUB
                 adapter.Fill(productsTable);
 
                 comboBox.DataSource = productsTable;
-                comboBox.DisplayMember = "Name"; // Отображать имена продуктов
-                comboBox.ValueMember = "ProductID"; // Хранить ID продуктов
+                comboBox.DisplayMember = "Name"; 
+                comboBox.ValueMember = "ProductID"; 
             }
             catch (Exception ex)
             {
@@ -635,7 +593,6 @@ namespace DeliveryHUB
             }
             else if (message.Contains("cannot insert the value null"))
             {
-                // Находим имя столбца
                 var columnMatch = System.Text.RegularExpressions.Regex.Match(message, @"column '(.*?)'");
                 string columnName = columnMatch.Success ? columnMatch.Groups[1].Value : "неизвестное поле";
                 return $"Ошибка: поле '{columnName}' не может быть пустым. Заполните это поле перед сохранением.";
@@ -661,7 +618,6 @@ namespace DeliveryHUB
                 return "Ошибка: указано неверное имя столбца. Проверьте структуру таблицы.";
             }
 
-            // Если ошибка не распознана
             return $"SQL-ошибка: {ex.Message}";
         }
         private void EditToolStripMenuItem_Click(object sender, EventArgs e)
@@ -685,21 +641,21 @@ namespace DeliveryHUB
 
                 using (SqlCommand command = new SqlCommand(query, db.GetSqlConnection()))
                 {
-                    DateTime? orderDate = null; // Для хранения значения OrderDate
+                    DateTime? orderDate = null; 
 
                     for (int i = 1; i < schema.Rows.Count; i++)
                     {
                         string columnName = schema.Rows[i]["COLUMN_NAME"].ToString();
-                        string dataType = schema.Rows[i]["DATA_TYPE"].ToString(); // Получаем тип данных столбца
+                        string dataType = schema.Rows[i]["DATA_TYPE"].ToString(); 
                         object newValue = null;
 
-                        if (dataType.Contains("date")) // Если столбец является датой
+                        if (dataType.Contains("date")) 
                         {
                             DateTime? minDate = null;
 
                             if (columnName.Equals("PickupDate", StringComparison.OrdinalIgnoreCase) && orderDate.HasValue)
                             {
-                                minDate = orderDate; // Устанавливаем минимальную дату
+                                minDate = orderDate; 
                             }
 
                             newValue = ShowDatePickerWithLabel($"Выберите значение для {columnName}:", columnName, minDate);
@@ -714,7 +670,7 @@ namespace DeliveryHUB
                             newValue = Prompt.ShowDialog($"Введите новое значение для {columnName}:", "Редактировать запись");
                         }
 
-                        // Если значение пустое, передаём DBNull
+
                         if (newValue == null || (newValue is string strValue && string.IsNullOrEmpty(strValue)))
                         {
                             command.Parameters.AddWithValue($"@param{i - 1}", DBNull.Value);
@@ -734,7 +690,7 @@ namespace DeliveryHUB
             }
             catch (SqlException ex)
             {
-                string errorMessage = TranslateSqlError(ex); // Переводим ошибку
+                string errorMessage = TranslateSqlError(ex); 
                 MessageBox.Show($"Ошибка редактирования записи: {errorMessage}", "Ошибка");
             }
             catch (Exception ex)
@@ -758,20 +714,16 @@ namespace DeliveryHUB
             try
             {
                 db.openConnection();
-                // Получаем первичный ключ выбранной записи
                 string keyColumn = db.GetSqlConnection().GetSchema("Columns", new[] { null, null, tableName }).Rows[0]["COLUMN_NAME"].ToString();
                 int id = Convert.ToInt32(dataGridViewMain.SelectedRows[0].Cells[0].Value);
 
-                // Проверяем наличие связанных записей
                 string relatedRecords = CheckRelatedRecords(id, tableName);
 
-                // Формируем сообщение для подтверждения удаления
                 string message = string.IsNullOrEmpty(relatedRecords)
                     ? $"Вы уверены, что хотите удалить запись с ID = {id} из таблицы '{tableName}'?"
                     : $"Вы уверены, что хотите удалить запись с ID = {id} из таблицы '{tableName}'?\n" +
                       $"Эта запись связана со следующими данными:\n{relatedRecords}";
 
-                // Показываем диалоговое окно с предупреждением
                 DialogResult result = MessageBox.Show(
                     message,
                     "Подтверждение удаления",
@@ -779,13 +731,11 @@ namespace DeliveryHUB
                     MessageBoxIcon.Warning
                 );
 
-                // Если пользователь выбрал "No", отменяем удаление
                 if (result == DialogResult.No)
                 {
                     return;
                 }
 
-                // Выполняем удаление записи
                 string query = $"DELETE FROM {tableName} WHERE {keyColumn} = @id";
 
                 using (SqlCommand command = new SqlCommand(query, db.GetSqlConnection()))
@@ -813,12 +763,11 @@ namespace DeliveryHUB
                 string selectedTable = SwitchingTablesBox.SelectedItem.ToString();
                 LoadData(selectedTable);
             }
-            // Обновляем видимость фильтров
             UpdateFilterVisibility();
         }
         private void dataGridViewMain_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0 || e.ColumnIndex < 0) return; // Игнорируем заголовки
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return; 
 
             if (SwitchingTablesBox.SelectedItem == null)
             {
@@ -826,15 +775,14 @@ namespace DeliveryHUB
                 return;
             }
 
-            string tableName = SwitchingTablesBox.SelectedItem.ToString(); // Определяем название таблицы
+            string tableName = SwitchingTablesBox.SelectedItem.ToString(); 
 
             try
             {
                 db.openConnection();
 
-                // Определяем имя колонки и значение ключевого столбца
                 string columnName = dataGridViewMain.Columns[e.ColumnIndex].HeaderText;
-                string keyColumn = dataGridViewMain.Columns[0].HeaderText; // Предполагаем, что ключевой столбец — первый
+                string keyColumn = dataGridViewMain.Columns[0].HeaderText; 
                 object id = dataGridViewMain.Rows[e.RowIndex].Cells[0].Value;
 
                 if (id == null)
@@ -843,10 +791,9 @@ namespace DeliveryHUB
                     return;
                 }
 
-                // Получаем новое значение из измененной ячейки
                 object newValue = dataGridViewMain.Rows[e.RowIndex].Cells[e.ColumnIndex].Value ?? DBNull.Value;
 
-                // Получаем информацию о столбце, чтобы проверить допустимость NULL
+
                 DataTable schema = db.GetSqlConnection().GetSchema("Columns", new[] { null, null, tableName });
                 var columnInfo = schema.AsEnumerable().FirstOrDefault(row => row["COLUMN_NAME"].ToString() == columnName);
                 bool isNullable = columnInfo != null && columnInfo["IS_NULLABLE"].ToString() == "YES";
@@ -857,7 +804,6 @@ namespace DeliveryHUB
                     return;
                 }
 
-                // Формируем запрос для обновления
                 string query = $"UPDATE {tableName} SET {columnName} = @value WHERE {keyColumn} = @id";
                 using (SqlCommand command = new SqlCommand(query, db.GetSqlConnection()))
                 {
@@ -866,7 +812,6 @@ namespace DeliveryHUB
                     command.ExecuteNonQuery();
                 }
 
-                //MessageBox.Show("Данные успешно обновлены.", "Успех");
             }
             catch (SqlException ex)
             {
@@ -890,7 +835,7 @@ namespace DeliveryHUB
         }
         private void dataGridViewMain_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            dataGridViewMain_CellValueChanged(sender, e); // Вызываем обновление данных
+            dataGridViewMain_CellValueChanged(sender, e); 
         }
         private void SearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -916,10 +861,8 @@ namespace DeliveryHUB
                     return;
                 }
 
-                // Экранируем символы, которые могут вызвать ошибки в фильтре
                 searchValue = searchValue.Replace("'", "''");
 
-                // Формируем фильтр
                 string filter = string.Join(" OR ", table.Columns.Cast<DataColumn>().Select(col =>
                 {
                     if (col.DataType == typeof(string))
@@ -928,21 +871,19 @@ namespace DeliveryHUB
                     }
                     else if (col.DataType == typeof(int) || col.DataType == typeof(decimal) || col.DataType == typeof(double) || col.DataType == typeof(float))
                     {
-                        // Конвертируем числовые значения в строку
                         return $"CONVERT([{col.ColumnName}], 'System.String') LIKE '%{searchValue}%'";
                     }
                     else if (col.DataType == typeof(DateTime))
                     {
-                        // Конвертируем дату в строку в формате "dd.MM.yyyy"
                         return $"CONVERT([{col.ColumnName}], 'System.String') LIKE '%{searchValue}%'";
                     }
                     else
                     {
-                        return "1=0"; // Игнорируем неподходящие столбцы
+                        return "1=0"; 
                     }
                 }));
 
-                // Применяем фильтр к DataTable
+
                 table.DefaultView.RowFilter = filter;
 
                 if (table.DefaultView.Count == 0)
@@ -1012,33 +953,30 @@ namespace DeliveryHUB
                 return;
             }
 
-            // Получаем название текущей выбранной таблицы
             string tableName = SwitchingTablesBox.SelectedItem.ToString();
 
-            // Загружаем данные из выбранной таблицы
             LoadData(tableName);
 
-            //MessageBox.Show("Данные таблицы успешно обновлены.", "Обновление");
         }
         private void LoadPickupPoints()
         {
             try
             {
                 db.openConnection();
-                string query = "SELECT Address FROM PickupPoints"; // Запрос для получения всех адресов
+                string query = "SELECT Address FROM PickupPoints"; 
                 SqlDataAdapter adapter = new SqlDataAdapter(query, db.GetSqlConnection());
                 DataTable pickupPointsTable = new DataTable();
                 adapter.Fill(pickupPointsTable);
 
-                cmbPickupPoints.Items.Clear(); // Очистить старые элементы
-                cmbPickupPoints.Items.Add("Выберите пункт"); // Добавляем пустой пункт
+                cmbPickupPoints.Items.Clear(); 
+                cmbPickupPoints.Items.Add("Выберите пункт"); 
                 foreach (DataRow row in pickupPointsTable.Rows)
                 {
                     string address = row["Address"].ToString();
-                    cmbPickupPoints.Items.Add(address); // Добавляем адрес в ComboBox
+                    cmbPickupPoints.Items.Add(address); 
                 }
 
-                cmbPickupPoints.SelectedIndex = 0; // По умолчанию выбираем первый элемент (Выберите пункт)
+                cmbPickupPoints.SelectedIndex = 0; 
             }
             catch (Exception ex)
             {
@@ -1055,20 +993,20 @@ namespace DeliveryHUB
             {
                 db.openConnection();
 
-                string query = "SELECT StatusDescription FROM OrderStatus"; // Запрос на получение всех статусов
+                string query = "SELECT StatusDescription FROM OrderStatus"; 
                 SqlDataAdapter adapter = new SqlDataAdapter(query, db.GetSqlConnection());
                 DataTable statusTable = new DataTable();
                 adapter.Fill(statusTable);
 
-                cmbStatusOrders.Items.Clear(); // Очищаем старые данные
-                cmbStatusOrders.Items.Add("Выберите статус"); // Добавляем пункт по умолчанию
+                cmbStatusOrders.Items.Clear(); 
+                cmbStatusOrders.Items.Add("Выберите статус"); 
 
                 foreach (DataRow row in statusTable.Rows)
                 {
-                    cmbStatusOrders.Items.Add(row["StatusDescription"].ToString()); // Добавляем статусы
+                    cmbStatusOrders.Items.Add(row["StatusDescription"].ToString()); 
                 }
 
-                cmbStatusOrders.SelectedIndex = 0; // Устанавливаем пункт по умолчанию
+                cmbStatusOrders.SelectedIndex = 0; 
             }
             catch (Exception ex)
             {
@@ -1084,7 +1022,7 @@ namespace DeliveryHUB
             string selectedAddress = cmbPickupPoints.SelectedItem?.ToString();
             string selectedStatus = cmbStatusOrders.SelectedItem?.ToString();
 
-            // Если оба фильтра сброшены, показываем все заказы
+
             if ((selectedAddress == "Выберите пункт" || string.IsNullOrEmpty(selectedAddress)) &&
                 (selectedStatus == "Выберите статус" || string.IsNullOrEmpty(selectedStatus)))
             {
@@ -1096,7 +1034,7 @@ namespace DeliveryHUB
             {
                 db.openConnection();
 
-                // Базовый запрос для фильтрации
+
                 string query = @"
         SELECT 
             o.OrderID,
@@ -1116,33 +1054,29 @@ namespace DeliveryHUB
         LEFT JOIN 
             PickupPoints pp ON o.PickupPointID = pp.PickupPointID
         LEFT JOIN 
-            OrderStatus os ON o.Status = os.StatusID";  // JOIN для получения описания статуса
+            OrderStatus os ON o.Status = os.StatusID";  
 
-                // Фильтрация по адресу
                 if (!string.IsNullOrEmpty(selectedAddress) && selectedAddress != "Выберите пункт")
                 {
-                    query += " WHERE pp.Address = @address";  // Фильтруем по адресу
+                    query += " WHERE pp.Address = @address";  
                 }
 
-                // Фильтрация по статусу
                 if (!string.IsNullOrEmpty(selectedStatus) && selectedStatus != "Выберите статус")
                 {
-                    // Если добавлен фильтр по статусу, добавляем условие для фильтрации по StatusDescription
                     if (query.Contains("WHERE"))
                     {
-                        query += " AND os.StatusDescription = @status";  // Фильтрация по статусу
+                        query += " AND os.StatusDescription = @status"; 
                     }
                     else
                     {
-                        query += " WHERE os.StatusDescription = @status";  // Добавляем WHERE если фильтры несколько
+                        query += " WHERE os.StatusDescription = @status";  
                     }
                 }
 
-                query += " ORDER BY o.OrderID";  // Сортировка по умолчанию, если не выбран другой критерий
+                query += " ORDER BY o.OrderID";  
 
                 SqlDataAdapter adapter = new SqlDataAdapter(query, db.GetSqlConnection());
 
-                // Добавление параметров для фильтров
                 if (!string.IsNullOrEmpty(selectedAddress) && selectedAddress != "Выберите пункт")
                 {
                     adapter.SelectCommand.Parameters.AddWithValue("@address", selectedAddress);
@@ -1156,10 +1090,9 @@ namespace DeliveryHUB
                 DataTable ordersTable = new DataTable();
                 adapter.Fill(ordersTable);
 
-                // Отображаем данные в DataGridView
                 dataGridViewMain.DataSource = ordersTable;
-                dataGridViewMain.AutoResizeColumns(); // Автоматическое изменение размера колонок
-                ApplySorting(); // Применяем сохраненную сортировку
+                dataGridViewMain.AutoResizeColumns(); 
+                ApplySorting(); 
 
             }
             catch (Exception ex)
@@ -1177,11 +1110,10 @@ namespace DeliveryHUB
             string selectedAddress = cmbPickupPoints.SelectedItem?.ToString();
             string selectedStatus = cmbStatusOrders.SelectedItem?.ToString();
 
-            // Если оба фильтра сброшены, показываем все заказы
             if ((selectedAddress == "Выберите пункт" || string.IsNullOrEmpty(selectedAddress)) &&
                 (selectedStatus == "Выберите статус" || string.IsNullOrEmpty(selectedStatus)))
             {
-                LoadData(SwitchingTablesBox.SelectedItem.ToString()); // Загрузка всех данных
+                LoadData(SwitchingTablesBox.SelectedItem.ToString()); 
                 return;
             }
 
@@ -1189,7 +1121,7 @@ namespace DeliveryHUB
             {
                 db.openConnection();
 
-                // Базовый запрос для фильтрации
+
                 string query = @"
         SELECT 
             o.OrderID,
@@ -1209,25 +1141,23 @@ namespace DeliveryHUB
         LEFT JOIN 
             PickupPoints pp ON o.PickupPointID = pp.PickupPointID
         LEFT JOIN 
-            OrderStatus os ON o.Status = os.StatusID";  // JOIN для получения описания статуса
+            OrderStatus os ON o.Status = os.StatusID";  
 
-                // Фильтрация по адресу
                 if (!string.IsNullOrEmpty(selectedAddress) && selectedAddress != "Выберите пункт")
                 {
                     query += " WHERE pp.Address = @address";
                 }
 
-                // Фильтрация по статусу
+
                 if (!string.IsNullOrEmpty(selectedStatus) && selectedStatus != "Выберите статус")
                 {
-                    query += " AND os.StatusDescription = @status";  // Используем описание статуса для фильтрации
+                    query += " AND os.StatusDescription = @status"; 
                 }
 
-                query += " ORDER BY o.OrderID";  // Сортировка по умолчанию, если не выбран другой критерий
+                query += " ORDER BY o.OrderID";  
 
                 SqlDataAdapter adapter = new SqlDataAdapter(query, db.GetSqlConnection());
 
-                // Добавление параметров для фильтров
                 if (!string.IsNullOrEmpty(selectedAddress) && selectedAddress != "Выберите пункт")
                 {
                     adapter.SelectCommand.Parameters.AddWithValue("@address", selectedAddress);
@@ -1241,10 +1171,9 @@ namespace DeliveryHUB
                 DataTable ordersTable = new DataTable();
                 adapter.Fill(ordersTable);
 
-                // Отображаем данные в DataGridView
                 dataGridViewMain.DataSource = ordersTable;
-                dataGridViewMain.AutoResizeColumns(); // Автоматическое изменение размера колонок
-                ApplySorting(); // Применяем сохраненную сортировку
+                dataGridViewMain.AutoResizeColumns(); 
+                ApplySorting(); 
 
             }
             catch (Exception ex)
@@ -1265,34 +1194,29 @@ namespace DeliveryHUB
 
                 if (!string.IsNullOrEmpty(selectedColumn))
                 {
-                    // Применяем сортировку к DataView, а затем к DataGridView
-                    currentTable.DefaultView.Sort = $"{selectedColumn} ASC"; // Сортировка по возрастанию
+                    currentTable.DefaultView.Sort = $"{selectedColumn} ASC"; 
 
-                    // Обновляем источник данных в DataGridView
                     dataGridViewMain.DataSource = currentTable.DefaultView.ToTable();
                 }
             }
 
-            // Обработка выбранного столбца для сохранения информации о сортировке
             if (cmbSortTable.SelectedItem != null)
             {
-                currentSortColumn = cmbSortTable.SelectedItem.ToString(); // Сохраняем выбранный столбец
-                ApplySorting(); // Применяем сортировку, если это необходимо
+                currentSortColumn = cmbSortTable.SelectedItem.ToString(); 
+                ApplySorting(); 
             }
         }
         private void PopulateSortColumns()
         {
             if (dataGridViewMain.DataSource is DataTable currentTable)
             {
-                cmbSortTable.Items.Clear();  // Очистить ComboBox
+                cmbSortTable.Items.Clear();  
 
-                // Добавляем имена всех столбцов в ComboBox
                 foreach (DataColumn column in currentTable.Columns)
                 {
                     cmbSortTable.Items.Add(column.ColumnName);
                 }
 
-                // Выбираем первый столбец по умолчанию
                 if (cmbSortTable.Items.Count > 0)
                 {
                     cmbSortTable.SelectedIndex = 0;
@@ -1307,7 +1231,6 @@ namespace DeliveryHUB
                 string selectedTable = SwitchingTablesBox.SelectedItem.ToString();
                 LoadData(selectedTable);
             }
-            // Обновляем видимость фильтров
             UpdateFilterVisibility();
         }
         private void ThemeSwitcher_CheckedChanged(object sender, EventArgs e)
@@ -1318,23 +1241,18 @@ namespace DeliveryHUB
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Устанавливаем флаг выхода
             isLogout = true;
 
-            // Создаем экземпляр формы авторизации
             LoginForm loginForm = new LoginForm();
 
-            // Показываем форму авторизации
             loginForm.Show();
 
-            // Скрываем текущую форму MainForm
             this.Hide();
         }
 
 
     }
 
-    // Класс Prompt
     public static class Prompt
     {
         public static string ShowDialog(string text, string caption)
@@ -1344,7 +1262,7 @@ namespace DeliveryHUB
                 Width = 400,
                 Height = 150,
                 Text = caption,
-                StartPosition = FormStartPosition.CenterScreen // Центрирование окна
+                StartPosition = FormStartPosition.CenterScreen 
             };
 
             Label textLabel = new Label() { Left = 10, Top = 10, Text = text, Width = 370 };
@@ -1371,7 +1289,7 @@ namespace DeliveryHUB
             }
             else
             {
-                return null; // Пользователь нажал "Отмена" или закрыл окно
+                return null;
             }
         }
     }

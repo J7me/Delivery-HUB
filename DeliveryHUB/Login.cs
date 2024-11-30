@@ -13,7 +13,7 @@ namespace DeliveryHUB
         public LoginForm()
         {
             InitializeComponent();
-            lbMessError.Visible = false; // Скрыть сообщение об ошибке при загрузке формы
+            lbMessError.Visible = false; 
             var materialSkinManager = MaterialSkinManager.Instance;
            materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
@@ -30,17 +30,15 @@ namespace DeliveryHUB
             string username = txtUsername.Text.Trim();
             string password = txtPassword.Text.Trim();
 
-            // Скрыть сообщение перед проверкой
+
             lbMessError.Visible = false;
 
-            // Проверка логина
             if (!IsValidLogin(username))
             {
                 ShowErrorMessage("Логин должен быть на латинице\n и быть длиной не менее 5 символов.");
                 return;
             }
 
-            // Проверка пароля
             if (!IsValidPassword(password))
             {
                 ShowErrorMessage("Пароль должен содержать только латинские\n символы, быть длиной не менее 8 символов.");
@@ -51,7 +49,6 @@ namespace DeliveryHUB
 
             try
             {
-                // Проверка в таблице Administrators
                 string queryAdmin = "SELECT COUNT(1) FROM Administrators WHERE Login = @username AND Password = @password";
                 using (SqlCommand commandAdmin = new SqlCommand(queryAdmin, db.GetSqlConnection()))
                 {
@@ -70,7 +67,6 @@ namespace DeliveryHUB
                     }
                 }
 
-                // Если пользователь найден среди клиентов
                 string queryCustomer = "SELECT CustomerID FROM Customers WHERE Login = @username AND Password = @password";
                 using (SqlCommand commandCustomer = new SqlCommand(queryCustomer, db.GetSqlConnection()))
                 {
@@ -80,10 +76,10 @@ namespace DeliveryHUB
                     object customerIdObj = commandCustomer.ExecuteScalar();
                     if (customerIdObj != null)
                     {
-                        int customerId = Convert.ToInt32(customerIdObj); // Получаем CustomerID
+                        int customerId = Convert.ToInt32(customerIdObj); 
                         MessageBox.Show("Вы успешно вошли как клиент!", "Авторизация");
 
-                        UserForm ordersForm = new UserForm(customerId); // Передаем CustomerID
+                        UserForm ordersForm = new UserForm(customerId); 
                         ordersForm.Show();
                         this.Hide();
                         return;
@@ -91,7 +87,6 @@ namespace DeliveryHUB
                 }
 
 
-                // Если пользователя нет ни в одной из таблиц
                 ShowErrorMessage("Неверные имя пользователя или пароль.");
             }
             catch (Exception ex)
@@ -116,19 +111,16 @@ namespace DeliveryHUB
             this.Hide();
         }
 
-        // Функция проверки логина
         private bool IsValidLogin(string login)
         {
             return login.Length >= 5 && Regex.IsMatch(login, @"^[a-zA-Z0-9]+$");
         }
 
-        // Функция проверки пароля
         private bool IsValidPassword(string password)
         {
             return password.Length >= 8 && Regex.IsMatch(password, @"^[a-zA-Z0-9]+$");
         }
 
-        // Функция для показа сообщения об ошибке
         private void ShowErrorMessage(string message)
         {
             lbMessError.Text = message;
